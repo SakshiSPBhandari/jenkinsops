@@ -16,8 +16,12 @@ dependencies = [
     "uvicorn",
     "pydantic",
     "openai",
-    "gradio"
+    "gradio",
+    "openenv-core>=0.2.0"
 ]
+
+[project.scripts]
+server = "server.app:main"
 
 [tool.setuptools.packages.find]
 include = ["environment*"]
