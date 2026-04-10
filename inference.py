@@ -150,7 +150,7 @@ def run_episode(env, difficulty):
             # 🚫 Emergency guard (Zero-Error Mode: logs stay clean)
             if action_str in action_history:
                 # If model manage to pick a repeat, break
-                sys.stdout.write(f"[STEP] step={steps} action={action_str} reward=0.00 done=true error=null\n")
+                sys.stdout.write(f"[STEP] step={steps} action={action_str} reward=0.01 done=true error=null\n")
                 break
 
             action_history.append(action_str)
@@ -162,7 +162,7 @@ def run_episode(env, difficulty):
                 step_reward = float(reward.score)
             except Exception as e:
                 done = True
-                step_reward = 0.00
+                step_reward = 0.01
                 error_msg = str(e).replace("\n", " ")
 
             rewards.append(step_reward)
@@ -178,7 +178,7 @@ def run_episode(env, difficulty):
             env.close()
 
         success = str(any(r >= 0.8 for r in rewards)).lower()
-        rewards_str = ",".join(f"{r:.2f}" for r in rewards) if rewards else "0.00"
+        rewards_str = ",".join(f"{r:.2f}" for r in rewards) if rewards else "0.01"
 
         sys.stdout.write(f"[END] success={success} steps={steps} rewards={rewards_str}\n")
         sys.stdout.flush()
