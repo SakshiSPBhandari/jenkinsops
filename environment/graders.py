@@ -39,7 +39,7 @@ def grade_action(
     if action_fix in fix_actions:
         if not observed:
             return Reward(
-                score=0.0,  # Zero-floor for penalties
+                score=0.01,  # Zero-floor for penalties
                 message="🚫 Prerequisite not met: You cannot apply a fix before observing the failure. "
                         "Start by inspecting logs, headers, or system state.",
                 is_done=False
@@ -55,13 +55,13 @@ def grade_action(
             
             if current_obs_count < required_obs:
                 return Reward(
-                    score=0.0,
+                    score=0.01,
                     message=f"⚠️ Insufficient evidence. Hard tasks require multiple observations ({current_obs_count}/{required_obs}).",
                     is_done=False
                 )
             if current_diag_count < required_diag:
                 return Reward(
-                    score=0.0,
+                    score=0.01,
                     message=f"⚠️ Incomplete diagnosis. Hard tasks require multi-signal confirmation ({current_diag_count}/{required_diag}).",
                     is_done=False
                 )
@@ -69,7 +69,7 @@ def grade_action(
             # Bridge if no diagnose tier exists
             if not diagnosed and tiers.get("diagnose", []):
                 return Reward(
-                    score=0.0,
+                    score=0.01,
                     message="🚫 Prerequisite not met: You need to diagnose the root cause before applying a fix.",
                     is_done=False
                 )
@@ -77,7 +77,7 @@ def grade_action(
         # Prerequisites met — apply fix
         # Bridging if diagnostic tier is empty
         diag_met = diagnosed or not tiers.get("diagnose", [])
-        final_score = 1.0 if (observed and diag_met) else 0.8
+        final_score = 0.99 if (observed and diag_met) else 0.8
         
         return Reward(
             score=final_score,
@@ -90,7 +90,7 @@ def grade_action(
     if previous_actions:
         if action_fix == previous_actions[-1]:
             return Reward(
-                score=0.0, # Zero-floor for penalties
+                score=0.01, # Zero-floor for penalties
                 message=f"🔴 FATAL: Consecutive repetition '{action_fix}'. Episode terminated.",
                 is_done=True
             )
@@ -98,13 +98,13 @@ def grade_action(
     repeat_count = previous_actions.count(action_fix)
     if repeat_count >= 2:
         return Reward(
-            score=0.0,
+            score=0.01,
             message=f"🔴 Loop Detection: '{action_fix}' repeated {repeat_count + 1} times. Terminating episode.",
             is_done=True
         )
     if repeat_count == 1:
         return Reward(
-            score=0.0,
+            score=0.01,
             message=f"⚠️ Already tried '{action_fix}'. Explore a different direction.",
             is_done=False
         )
@@ -121,7 +121,7 @@ def grade_action(
     if action_fix in diagnose_actions:
         if not observed:
             return Reward(
-                score=0.0,
+                score=0.01,
                 message="⚠️ Attempting diagnosis before observation. Try inspecting state first.",
                 is_done=False
             )
@@ -134,7 +134,7 @@ def grade_action(
     # ── 5. Explicitly listed irrelevant action ──
     if action_fix in scenario.get("irrelevant_actions", []):
         return Reward(
-            score=0.0,
+            score=0.01,
             message=f"❌ Unrelated to this failure. Hint: {scenario.get('hint', '')}",
             is_done=False
         )
@@ -161,7 +161,7 @@ def grade_action(
 
     # ── 7. Completely wrong action ──
     return Reward(
-        score=0.0,
+        score=0.01,
         message=f"❌ Unrelated to this failure. Hint: {scenario.get('hint', '')}",
         is_done=False
     )
