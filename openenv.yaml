@@ -73,7 +73,7 @@ tasks:
   - id: easy
     name: Basic Pipeline Failure
     difficulty: easy
-    steps: 2–3
+    steps: 2
     description: Direct 1:1 error→fix mapping. One observe step unlocks fix.
     max_attempts: 3
     example: "Branch not found → check names → correct_branch_name"
@@ -81,7 +81,7 @@ tasks:
   - id: medium
     name: Deployment Failure
     difficulty: medium
-    steps: 3–4
+    steps: 3
     description: Requires one observe + one diagnose before fix is unlocked.
     max_attempts: 5
     example: "ECS task not found → inspect → compare accounts → correct_task_definition"
@@ -89,17 +89,17 @@ tasks:
   - id: hard
     name: Cascading Multi-Signal Failure
     difficulty: hard
-    steps: 4–6
+    steps: 5
     description: Multi-service failures, shared root causes, ambiguous signals. Agent must use context_data to distinguish variants. Cannot shortcut to fix.
     max_attempts: 8
     example: "HTTP 403 → read headers → confirm auth status → detect cause → authenticate"
 
 # ── ENDPOINTS ────────────────────────────────────────────────────────────────
 endpoints:
-  reset: POST /reset?difficulty=easy|medium|hard
-  step:  POST /step  body={"fix": "action_name"}
-  state: GET  /state
-  tasks: GET  /tasks
+  reset: /reset
+  step:  /step
+  state: /state
+  tasks: /tasks
 
 # ── DEPLOYMENT ────────────────────────────────────────────────────────────────
 docker:
