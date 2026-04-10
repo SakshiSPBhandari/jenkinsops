@@ -77,7 +77,7 @@ def grade_action(
         # Prerequisites met — apply fix
         # Bridging if diagnostic tier is empty
         diag_met = diagnosed or not tiers.get("diagnose", [])
-        final_score = 0.99 if (observed and diag_met) else 0.8
+        final_score = 0.75 if (observed and diag_met) else 0.50
         
         return Reward(
             score=final_score,
@@ -112,7 +112,7 @@ def grade_action(
     # ── 3. Observe Tier ──
     if action_fix in observe_actions:
         return Reward(
-            score=0.1,  # Reduced but positive for progress
+            score=0.05,  # Reduced but positive for progress
             message="🔍 Good — you've gathered system state. This narrows the failure scope.",
             is_done=False
         )
@@ -126,7 +126,7 @@ def grade_action(
                 is_done=False
             )
         return Reward(
-            score=0.1,  # Positive for milestone
+            score=0.05,  # Positive for milestone
             message="🧠 Root cause identified! Apply the fix when ready.",
             is_done=False
         )
@@ -154,7 +154,7 @@ def grade_action(
         keywords = domain_keywords.get(scenario.get("category", ""), [])
         if any(kw in action_fix.lower() for kw in keywords):
             return Reward(
-                score=0.05,  # Small positive for safe domain exploration
+                score=0.02,  # Small positive for safe domain exploration
                 message=f"➕ Right domain. Hint: {scenario.get('hint', '')}",
                 is_done=False
             )
