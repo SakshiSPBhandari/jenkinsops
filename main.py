@@ -39,10 +39,20 @@ def health():
     return {"status": "ok", "version": "2.0.0"}
 
 
+from pydantic import BaseModel
+from typing import Optional
+
+class ResetRequest(BaseModel):
+    difficulty: Optional[str] = None
+
 @app.post("/reset")
-def reset(difficulty: str = Query(default=None, description="easy | medium | hard")):
+def reset(difficulty: Optional[str] = Query(default=None, description="easy | medium | hard"), body: Optional[ResetRequest] = None):
     """Start a new episode. Returns the initial observation."""
-    obs = env.reset(difficulty=difficulty)
+    diff = difficulty
+    if body and body.difficulty:
+        diff = body.difficulty
+    
+    obs = env.reset(difficulty=diff)
     return obs.dict()
 
 
