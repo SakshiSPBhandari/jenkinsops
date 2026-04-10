@@ -1,5 +1,10 @@
 # main.py — FastAPI server (OpenEnv REST API for HuggingFace Space)
 
+import sys
+import types
+if "audioop" not in sys.modules:
+    sys.modules["audioop"] = types.ModuleType("audioop")
+
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from environment.env import JenkinsOpsEnv
@@ -108,3 +113,8 @@ def tasks():
             }
         ]
     }
+
+import gradio as gr
+from app import app as ui_app
+
+app = gr.mount_gradio_app(app, ui_app, path="/ui")
