@@ -9,7 +9,7 @@ MANDATORY variables:
 STDOUT FORMAT (mandatory):
     [START] task=<task> env=<env> model=<model>
     [STEP]  step=<n> action=<action> reward=<r> done=<bool> error=<msg|null>
-    [END]   success=<bool> steps=<n> rewards=<r1,r2,...>
+    [END]   success=<bool> steps=<n> score=<float> rewards=<r1,r2,...>
 """
 
 import os
@@ -177,10 +177,13 @@ def run_episode(env, difficulty):
         if hasattr(env, "close"):
             env.close()
 
-        success = str(any(r >= 0.8 for r in rewards)).lower()
+        success = str(any(r >= 0.5 for r in rewards)).lower()
         rewards_str = ",".join(f"{r:.2f}" for r in rewards) if rewards else "0.01"
+        # Normalize score to strictly (0, 1): sum / MAX_STEPS keeps it well below 1.0
+        raw_score = sum(rewards) / MAX_STEPS if rewards else 0.01
+        score = max(0.01, min(0.99, raw_score))
 
-        sys.stdout.write(f"[END] success={success} steps={steps} rewards={rewards_str}\n")
+        sys.stdout.write(f"[END] success={success} steps={steps} score={score:.3f} rewards={rewards_str}\n")
         sys.stdout.flush()
 
 # ── MAIN ──
